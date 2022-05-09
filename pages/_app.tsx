@@ -3,6 +3,18 @@ import type { AppProps } from 'next/app'
 import PubNub from 'pubnub'
 import { PubNubProvider, usePubNub } from 'pubnub-react'
 import { useMemo } from 'react'
+import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
+import { Provider, createClient, chain } from 'wagmi'
+
+const client = createClient({
+  autoConnect: true,
+  connectors: [
+    new MetaMaskConnector({
+      chains: [chain.polygon, chain.polygonMumbai],
+      options: { shimDisconnect: true },
+    }),
+  ],
+})
 
 function MyApp({ Component, pageProps }: AppProps) {
   const pubnub = useMemo(() => {
@@ -19,7 +31,9 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <PubNubProvider client={pubnub}>
-      <Component {...pageProps} />
+      <Provider client={client}>
+        <Component {...pageProps} />
+      </Provider>
     </PubNubProvider>
   )
 }
