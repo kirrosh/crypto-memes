@@ -3,20 +3,27 @@ import { Children, FC, useMemo } from 'react'
 import PubNub from 'pubnub'
 import { createClient, chain, Provider as WagmiProvider } from 'wagmi'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
-import { useInitAuth, useMetamaskAuth } from 'features/auth'
-import { Provider as JotaiProvider } from 'jotai'
+import { authAtom, useInitAuth, useMetamaskAuth } from 'features/auth'
+import { Provider as JotaiProvider, useAtomValue } from 'jotai'
+import { useRouter } from 'next/router'
 
 type Props = {
-  accountAddress: string
+  accountAddress?: string
 }
 export const RealtimeProvider: FC<Props> = ({ accountAddress, children }) => {
-  const client = useMemo(() => {
-    return new PubNub({
-      publishKey: process.env.NEXT_PUBLIC_PUBNUB_PUBLISH_KEY,
-      subscribeKey: process.env.NEXT_PUBLIC_PUBNUB_SUBSCRIBE_KEY || '',
-      uuid: accountAddress,
-    })
-  }, [accountAddress])
+  const client = useMemo(
+    () =>
+      accountAddress &&
+      new PubNub({
+        publishKey: process.env.NEXT_PUBLIC_PUBNUB_PUBLISH_KEY,
+        subscribeKey: process.env.NEXT_PUBLIC_PUBNUB_SUBSCRIBE_KEY || '',
+        uuid: accountAddress,
+      }),
+    [accountAddress]
+  )
+  if (!client) {
+    return <>Loading...</>
+  }
   return <PubNubProvider client={client}>{children}</PubNubProvider>
 }
 
@@ -32,9 +39,20 @@ const client = createClient({
 
 export const AppMainProvider: FC = ({ children }) => {
   useInitAuth()
+  const auth = useAtomValue(authAtom)
+  const { pathname } = useRouter()
+  if (pathname === '/start') {
+    return (
+      <JotaiProvider>
+        <WagmiProvider client={client}>{children}</WagmiProvider>
+      </JotaiProvider>
+    )
+  }
   return (
     <JotaiProvider>
-      <WagmiProvider client={client}>{children}</WagmiProvider>
+      <RealtimeProvider accountAddress={auth.address}>
+        <WagmiProvider client={client}>{children}</WagmiProvider>
+      </RealtimeProvider>
     </JotaiProvider>
   )
 }
