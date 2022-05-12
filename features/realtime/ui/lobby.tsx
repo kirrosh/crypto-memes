@@ -1,64 +1,29 @@
-// import { useChannelMembers, useChannels } from '@pubnub/react-chat-components'
-import { usePubNub } from 'pubnub-react'
-import { useCallback, useEffect, useMemo } from 'react'
+import { useAtomValue } from 'jotai'
+import { useCallback, useEffect } from 'react'
+import { Button } from 'react-daisyui'
+import { socketAtom } from '../lib/socketIo'
 
 type Props = {
   lobbyId: string
 }
 
-const log = (msg: any) => console.log(msg)
-const log2 = (msg: any) => console.log(msg)
-
 export const Lobby = ({ lobbyId }: Props) => {
-  // const [members, fetchPage, total, error] = useChannelMembers({
-  //   filter: '',
-  //   channel: lobbyId,
-  // })
-  // console.log(members)
-  const pubnub = usePubNub()
+  const socket = useAtomValue(socketAtom)
 
-  const listeners = useMemo(() => {
-    return {
-      // message: log,
-      presence: (msg: any) => {
-        console.log(msg)
-        pubnub.hereNow(
-          { channels: [lobbyId], includeUUIDs: true },
-          (err, res) => {
-            console.log(res)
-          }
-        )
-      },
-    }
-  }, [lobbyId, pubnub])
   useEffect(() => {
-    pubnub.addListener(listeners)
-    pubnub.subscribe({
-      channels: [lobbyId],
-      withPresence: true,
-    })
-    return () => {
-      pubnub.removeListener(listeners)
-      pubnub.unsubscribe({
-        channels: [lobbyId],
-      })
-    }
-  }, [pubnub, lobbyId, listeners])
+    socket?.emit('joinLobby', lobbyId)
+  }, [socket])
 
-  // const sendMessage = useCallback(() => {
-  //   return pubnub.publish({
-  //     channel: lobbyId,
-  //     message: { type: 'MESSAGE', text: 'Hello' },
-  //   })
-  // }, [pubnub])
-
+  const emit = useCallback(() => {
+    socket?.emit('joinLobby', lobbyId)
+  }, [socket])
   return (
     <div className="min-h-screen hero bg-base-200">
       <div className="text-center hero-content">
         <div className="max-w-md">
           <h1 className="text-5xl font-bold">Lobby {lobbyId}</h1>
-          {/* <p className="py-6">Enter lobby id.</p> */}
           <div className="flex gap-4 mt-6"></div>
+          <Button onClick={emit}>Emit</Button>
         </div>
       </div>
     </div>

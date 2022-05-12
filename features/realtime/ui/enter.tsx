@@ -1,7 +1,6 @@
 import { atom, useAtom } from 'jotai'
 import { useRouter } from 'next/router'
 import { Button, Input } from 'react-daisyui'
-import { useChannels } from '@pubnub/react-chat-components'
 
 export const lobbyIdAtom = atom('')
 export const Enter = () => {
@@ -10,8 +9,6 @@ export const Enter = () => {
   const goToLobby = () => {
     value && push(`/lobby/${value}`)
   }
-  const [channels, fetchPage, total, error] = useChannels()
-  console.log(channels)
   return (
     <div className="min-h-screen hero bg-base-200">
       <div className="text-center hero-content">
