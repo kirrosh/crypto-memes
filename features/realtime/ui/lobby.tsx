@@ -1,28 +1,49 @@
+// import { useChannelMembers, useChannels } from '@pubnub/react-chat-components'
 import { usePubNub } from 'pubnub-react'
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 
 type Props = {
   lobbyId: string
 }
+
+const log = (msg: any) => console.log(msg)
+const log2 = (msg: any) => console.log(msg)
+
 export const Lobby = ({ lobbyId }: Props) => {
+  // const [members, fetchPage, total, error] = useChannelMembers({
+  //   filter: '',
+  //   channel: lobbyId,
+  // })
+  // console.log(members)
   const pubnub = usePubNub()
-  useEffect(() => {
-    pubnub.addListener({
-      message: (msg) => {
+
+  const listeners = useMemo(() => {
+    return {
+      // message: log,
+      presence: (msg: any) => {
         console.log(msg)
+        pubnub.hereNow(
+          { channels: [lobbyId], includeUUIDs: true },
+          (err, res) => {
+            console.log(res)
+          }
+        )
       },
-      presence: (msg) => console.log(msg),
-    })
+    }
+  }, [lobbyId, pubnub])
+  useEffect(() => {
+    pubnub.addListener(listeners)
     pubnub.subscribe({
       channels: [lobbyId],
       withPresence: true,
     })
     return () => {
+      pubnub.removeListener(listeners)
       pubnub.unsubscribe({
         channels: [lobbyId],
       })
     }
-  }, [pubnub, lobbyId])
+  }, [pubnub, lobbyId, listeners])
 
   // const sendMessage = useCallback(() => {
   //   return pubnub.publish({

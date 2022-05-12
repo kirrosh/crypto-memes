@@ -1,6 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@pubnub/react-chat-components': ^0.9.0
   '@types/node': 17.0.4
   '@types/pubnub': ^4.29.7
   '@types/react': 17.0.38
@@ -11,12 +12,14 @@ specifiers:
   iron-session: ^6.1.3
   jotai: ^1.6.5
   next: latest
+  next-transpile-modules: ^9.0.0
   postcss: ^8.4.5
   prettier: ^2.5.1
   prettier-plugin-tailwindcss: ^0.1.1
   pubnub: ^5.0.1
   pubnub-react: ^2.1.1
   react: ^17.0.2
+  react-daisyui: ^2.0.1
   react-dom: ^17.0.2
   siwe: ^1.1.6
   tailwindcss: ^3.0.7
@@ -25,16 +28,19 @@ specifiers:
   wagmi: ^0.3.4
 
 dependencies:
+  '@pubnub/react-chat-components': 0.9.0_wdcchiahqu5rje5orrw2b6r7rm
   autoprefixer: 10.4.7_postcss@8.4.13
   daisyui: 2.14.3_cr4sis33dk4di3xnobyqnqmrf4
   ethers: 5.6.5
   iron-session: 6.1.3_next@12.1.6
   jotai: 1.6.5_react@17.0.2
   next: 12.1.6_sfoxds7t5ydpegc3knd667wn6m
+  next-transpile-modules: 9.0.0
   postcss: 8.4.13
   pubnub: 5.0.1
   pubnub-react: 2.1.1_hgobw5vig7w7tcjcx26kkwtqjm
   react: 17.0.2
+  react-daisyui: 2.0.1_rgbmc525udr3qvhsqgskuprpye
   react-dom: 17.0.2_react@17.0.2
   siwe: 1.1.6_ethers@5.6.5
   tailwindcss: 3.0.24
@@ -784,6 +790,36 @@ packages:
 
   /@pedrouid/environment/1.0.1:
     resolution: {integrity: sha512-HaW78NszGzRZd9SeoI3JD11JqY+lubnaOx7Pewj5pfjqWXOEATpeKIFb9Z4t2WBUK2iryiXX3lzWwmYWgUL0Ug==}
+    dev: false
+
+  /@pubnub/react-chat-components/0.9.0_wdcchiahqu5rje5orrw2b6r7rm:
+    resolution: {integrity: sha512-3d+oMPGgwKcic1u3IoUrtVf7W0+q3mM+DA4FuTolZfTdQpZkffKRqEBlwtaRRPFaBnWVZlufJ24XKgG1raTh3w==}
+    peerDependencies:
+      pubnub: ^4.29.9
+      pubnub-react: ^2.1.0
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      jotai: 1.6.5_react@17.0.2
+      lodash.clonedeep: 4.5.0
+      lodash.isequal: 4.5.0
+      lodash.merge: 4.6.2
+      lodash.mergewith: 4.6.2
+      lodash.set: 4.3.2
+      pubnub: 5.0.1
+      pubnub-react: 2.1.1_hgobw5vig7w7tcjcx26kkwtqjm
+      react: 17.0.2
+      react-dom: 17.0.2_react@17.0.2
+    transitivePeerDependencies:
+      - '@babel/core'
+      - '@babel/template'
+      - '@urql/core'
+      - immer
+      - optics-ts
+      - react-query
+      - valtio
+      - wonka
+      - xstate
     dev: false
 
   /@spruceid/siwe-parser/1.1.3:
@@ -1791,6 +1827,14 @@ packages:
     resolution: {integrity: sha512-CwBLREIQ7LvYFB0WyRvwhq5N5qPhc6PMjD6bYggFlI5YyDgl+0vxq5VHbMOFqLg7hfWzmu8T5Z1QofhmTIhItA==}
     dev: false
 
+  /enhanced-resolve/5.9.3:
+    resolution: {integrity: sha512-Bq9VSor+kjvW3f9/MiiR4eE3XYgOl7/rS8lnSxbRbF3kS0B2r+Y9w5krBWxZgDxASVZbdYrn5wT4j/Wb0J9qow==}
+    engines: {node: '>=10.13.0'}
+    dependencies:
+      graceful-fs: 4.2.10
+      tapable: 2.2.1
+    dev: false
+
   /escalade/3.1.1:
     resolution: {integrity: sha512-k0er2gUkLf8O0zKJiAhmkTnJlTvINGv7ygDNPbeIsX/TJjGJZHuh9B2UxbsaEkmlEo9MfhrSzmhIlhRlI2GXnw==}
     engines: {node: '>=6'}
@@ -2488,8 +2532,28 @@ packages:
       path-exists: 3.0.0
     dev: false
 
+  /lodash.clonedeep/4.5.0:
+    resolution: {integrity: sha1-4j8/nE+Pvd6HJSnBBxhXoIblzO8=}
+    dev: false
+
   /lodash.debounce/4.0.8:
     resolution: {integrity: sha1-gteb/zCmfEAF/9XiUVMArZyk168=}
+    dev: false
+
+  /lodash.isequal/4.5.0:
+    resolution: {integrity: sha1-QVxEePK8wwEgwizhDtMib30+GOA=}
+    dev: false
+
+  /lodash.merge/4.6.2:
+    resolution: {integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==}
+    dev: false
+
+  /lodash.mergewith/4.6.2:
+    resolution: {integrity: sha512-GK3g5RPZWTRSeLSpgP8Xhra+pnjBC56q9FZYe1d5RN3TJ35dbkGy3YqBSMbyCrlbi+CM9Z3Jk5yTL7RCsqboyQ==}
+    dev: false
+
+  /lodash.set/4.3.2:
+    resolution: {integrity: sha1-2HV7HagH3eJIFrDWqEvqGnYjCyM=}
     dev: false
 
   /loose-envify/1.4.0:
@@ -2608,6 +2672,13 @@ packages:
   /netmask/2.0.2:
     resolution: {integrity: sha512-dBpDMdxv9Irdq66304OLfEmQ9tbNRFnFTuZiLo+bD+r332bBmMJ8GBLXklIXXgxd3+v9+KUnZaUR5PJMa75Gsg==}
     engines: {node: '>= 0.4.0'}
+    dev: false
+
+  /next-transpile-modules/9.0.0:
+    resolution: {integrity: sha512-VCNFOazIAnXn1hvgYYSTYMnoWgKgwlYh4lm1pKbSfiB3kj5ZYLcKVhfh3jkPOg1cnd9DP+pte9yCUocdPEUBTQ==}
+    dependencies:
+      enhanced-resolve: 5.9.3
+      escalade: 3.1.1
     dev: false
 
   /next/12.1.6_sfoxds7t5ydpegc3knd667wn6m:
@@ -3013,6 +3084,20 @@ packages:
       http-errors: 2.0.0
       iconv-lite: 0.4.24
       unpipe: 1.0.0
+    dev: false
+
+  /react-daisyui/2.0.1_rgbmc525udr3qvhsqgskuprpye:
+    resolution: {integrity: sha512-1JRJnkkyaPsCdMrZi5Zt6OD4hZ+x/3aMX/+T1wydq5WkpE9TTIQ4804andipsVrjzMhQ0Uc9INOvkTg8V23Zug==}
+    peerDependencies:
+      daisyui: ^2.14.0
+      react: '>=16'
+      react-dom: '>=16'
+      tailwindcss: ^3.0.23
+    dependencies:
+      daisyui: 2.14.3_cr4sis33dk4di3xnobyqnqmrf4
+      react: 17.0.2
+      react-dom: 17.0.2_react@17.0.2
+      tailwindcss: 3.0.24
     dev: false
 
   /react-dom/17.0.2_react@17.0.2:
@@ -3428,6 +3513,11 @@ packages:
       resolve: 1.22.0
     transitivePeerDependencies:
       - ts-node
+    dev: false
+
+  /tapable/2.2.1:
+    resolution: {integrity: sha512-GNzQvQTOIP6RyTfE2Qxb8ZVlNmw0n88vp1szwWRimP02mnTsx3Wtn5qRdqY9w2XduFNUgvOwhNnQsjwCp+kqaQ==}
+    engines: {node: '>=6'}
     dev: false
 
   /to-fast-properties/2.0.0:

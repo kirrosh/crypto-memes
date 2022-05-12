@@ -1,5 +1,7 @@
 import { atom, useAtom } from 'jotai'
 import { useRouter } from 'next/router'
+import { Button, Input } from 'react-daisyui'
+import { useChannels } from '@pubnub/react-chat-components'
 
 export const lobbyIdAtom = atom('')
 export const Enter = () => {
@@ -8,6 +10,8 @@ export const Enter = () => {
   const goToLobby = () => {
     value && push(`/lobby/${value}`)
   }
+  const [channels, fetchPage, total, error] = useChannels()
+  console.log(channels)
   return (
     <div className="min-h-screen hero bg-base-200">
       <div className="text-center hero-content">
@@ -15,17 +19,17 @@ export const Enter = () => {
           <h1 className="text-5xl font-bold">Connect to Game</h1>
           {/* <p className="py-6">Enter lobby id.</p> */}
           <div className="flex gap-4 mt-6">
-            <input
+            <Input
               onChange={(e) => setVluea(e.target.value)}
               maxLength={6}
-              type="text"
+              //   type="text"
               //   placeholder="Type here"
-              className="w-full max-w-xs input input-bordered input-primary"
+              //   className="w-full max-w-xs input input-bordered input-primary"
             />
 
-            <button className="btn btn-primary" onClick={goToLobby}>
+            <Button color="info" onClick={goToLobby}>
               Go
-            </button>
+            </Button>
           </div>
         </div>
       </div>
