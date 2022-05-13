@@ -75,7 +75,7 @@ export const useMetamaskAuth = () => {
   //   }
   // }, [account.data?.address, auth.address])
 
-  return [auth, signIn, signOut] as [typeof auth, typeof signIn, typeof signOut]
+  return { auth, signIn, signOut }
 }
 
 export const useInitAuth = () => {

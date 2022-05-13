@@ -18,13 +18,11 @@ export const Lobby = ({ lobbyId }: Props) => {
     socket?.emit('joinLobby', lobbyId)
   }, [socket])
   return (
-    <div className="min-h-screen hero bg-base-200">
-      <div className="text-center hero-content">
-        <div className="max-w-md">
-          <h1 className="text-5xl font-bold">Lobby {lobbyId}</h1>
-          <div className="flex gap-4 mt-6"></div>
-          <Button onClick={emit}>Emit</Button>
-        </div>
+    <div className="text-center hero-content">
+      <div className="max-w-md">
+        <h1 className="text-5xl font-bold">Lobby {lobbyId}</h1>
+        <div className="flex gap-4 mt-6"></div>
+        <Button onClick={emit}>Emit</Button>
       </div>
     </div>
   )

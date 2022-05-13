@@ -6,3 +6,4 @@ export {
   withSessionSsr,
 } from './lib/session-tools'
 export type { PrivateRouteProps } from './lib/session-tools'
+export { formatAddress } from './lib/utils'
