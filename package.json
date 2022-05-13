@@ -1,5 +1,5 @@
 {
-  "name": "turborepo-basic-shared",
+  "name": "crypto-memes",
   "version": "0.0.0",
   "private": true,
   "workspaces": [
@@ -12,9 +12,11 @@
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
-  "devDependencies": {
-    "prettier": "latest",
+  "dependencies": {
     "turbo": "latest"
+  },
+  "devDependencies": {
+    "prettier": "latest"
   },
   "prettier": {
     "semi": false,
