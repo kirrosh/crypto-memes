@@ -8,11 +8,13 @@ import {
 } from '@nestjs/websockets';
 import { Logger } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
+import { SocketService } from './socket/socket.service';
 
 @WebSocketGateway({ cors: true })
 export class AppGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
+  constructor(private socketService: SocketService) {}
   @WebSocketServer()
   server: Server;
 
@@ -25,11 +27,15 @@ export class AppGateway
 
   @SubscribeMessage('joinLobby')
   handleJoinLobby(client: Socket, payload: string): void {
-    this.logger.log('join to lobby1: ' + payload);
+    this.logger.log('join to lobby: ' + payload);
+    client.join(payload);
+    this.server.to(payload).emit('lobbyUpdate', { message: 'hi' });
+    this.logger.log('rooms: ' + this.server.of('/').adapter.rooms.size);
     // this.server.emit('msgToClient', payload);
   }
 
   afterInit(server: Server) {
+    this.socketService.socket = server;
     this.logger.log('Init');
   }
 
