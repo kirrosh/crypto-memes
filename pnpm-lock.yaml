@@ -114,6 +114,7 @@ importers:
       rimraf: 3.0.2
       rxjs: 7.5.5
       socket.io: 4.5.0
+      source-map-support: 0.5.21
     devDependencies:
       '@nestjs/schematics': 8.0.11_typescript@4.6.4
       '@nestjs/testing': 8.4.4_loutjh2c633gtj2hgeppyprxme
@@ -129,7 +130,6 @@ importers:
       jest: 28.0.3_24esr3464d2gifgmzdt2yhkw2m
       prettier: 2.6.2
       run-script-webpack-plugin: 0.0.12
-      source-map-support: 0.5.21
       supertest: 6.2.3
       ts-jest: 28.0.1_jw4qpfj6m43htbnoqw2i363564
       ts-loader: 9.3.0_gp3atwgq76mgimstdygasg64n4
