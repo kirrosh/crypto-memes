@@ -18,6 +18,7 @@ export const useConnection = () => {
   useEffect(() => {
     const socket = io(process.env.NEXT_PUBLIC_WS || url, {
       secure: true,
+      transports: ['websocket'],
       rejectUnauthorized: false,
     })
     socket.on('connect', () => {
