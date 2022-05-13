@@ -11,7 +11,7 @@ type RoomsResponse = {
 export const LobbyList = () => {
   const { push } = useRouter()
   const { data } = useQuery('rooms', () =>
-    ky.get(`http://localhost:5000/rooms`).json<RoomsResponse>()
+    ky.get(`${process.env.NEXT_PUBLIC_WS}/rooms`).json<RoomsResponse>()
   )
   console.log(data)
   const goToLobby = useCallback((id: string) => {
