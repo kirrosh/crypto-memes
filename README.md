@@ -23,6 +23,12 @@ This turborepo has some additional tools already setup for you:
 - [ESLint](https://eslint.org/) for code linting
 - [Prettier](https://prettier.io) for code formatting
 
+### env
+
+IRON_SESSION_COOKIE_NAME=
+IRON_SESSION_PASSWORD=
+NEXT_PUBLIC_WS=
+
 ### Build
 
 To build all apps and packages, run the following command:
@@ -38,6 +44,17 @@ To develop all apps and packages, run the following command:
 ```
 pnpm run dev
 ```
+
+## Deploy
+
+### Server (Heroku)
+
+- go to apps/server
+- git add .
+- git commit -m "new commit"
+- git push heroku main
+
+(For new app use https://github.com/unfold/heroku-buildpack-pnpm buildpack)
 
 ## Useful Links
 
