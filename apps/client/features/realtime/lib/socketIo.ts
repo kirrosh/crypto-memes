@@ -16,7 +16,10 @@ export const socketAtom = atom<Socket<
 export const useConnection = () => {
   const setSocket = useSetAtom(socketAtom)
   useEffect(() => {
-    const socket = io(process.env.NEXT_PUBLIC_WS || url)
+    const socket = io(process.env.NEXT_PUBLIC_WS || url, {
+      secure: true,
+      rejectUnauthorized: false,
+    })
     socket.on('connect', () => {
       console.log(socket.id)
       setSocket(socket)
