@@ -8,12 +8,21 @@ type RoomsResponse = {
   rooms: string[]
 }
 
+type SituationsResponse = {
+  // rooms: string[]
+}
+
 export const LobbyList = () => {
   const { push } = useRouter()
   const { data } = useQuery('rooms', () =>
     ky.get(`${process.env.NEXT_PUBLIC_WS}/rooms`).json<RoomsResponse>()
   )
-  console.log(data)
+  const { data: situations } = useQuery('situations', () =>
+    ky
+      .get(`${process.env.NEXT_PUBLIC_WS}/situations`)
+      .json<SituationsResponse>()
+  )
+  console.log(situations)
   const goToLobby = useCallback((id: string) => {
     push(`/lobby/${id}`)
   }, [])
