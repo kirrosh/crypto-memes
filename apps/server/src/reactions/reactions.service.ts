@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+// @ts-ignore
 import { Prisma, Reaction } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 
