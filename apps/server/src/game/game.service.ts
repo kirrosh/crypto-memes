@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-// @ts-ignore
 import { Reaction, Situation } from '@prisma/client';
 import { ReactionsService } from 'src/reactions/reactions.service';
 import { SituationsService } from 'src/situations/situations.service';
