@@ -45,22 +45,11 @@ export class AppGateway
       account: payload.account,
       id: client.id,
     };
-    // this.server
-    //   .to(this.lobbyService.createLobbyName(payload))
-    //   .emit('lobbyUpdate', { message: 'hi' });
     this.logger.log('rooms: ' + this.server.of('/').adapter.rooms.size);
-    // this.server.emit('msgToClient', payload);
   }
   @SubscribeMessage('leave-lobby')
   handleCreateRoom(client: Socket, payload: string): void {
     client.leave(payload);
-    // this.server.emit('room-created', room);
-    // this.logger.log('room-created', room);
-    // this.logger.log('join to lobby: ' + payload);
-    // client.join(payload);
-    // this.server.to(payload).emit('lobbyUpdate', { message: 'hi' });
-    // this.logger.log('rooms: ' + this.server.of('/').adapter.rooms.size);
-    // this.server.emit('msgToClient', payload);
   }
 
   afterInit(server: Server) {

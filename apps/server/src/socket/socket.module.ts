@@ -3,6 +3,7 @@ import { GameService } from 'src/game/game.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ReactionsService } from 'src/reactions/reactions.service';
 import { SituationsService } from 'src/situations/situations.service';
+import { LobbyService } from 'src/utils/lobby/lobby.service';
 import { SocketService } from './socket.service';
 
 @Global()
@@ -13,6 +14,7 @@ import { SocketService } from './socket.service';
     ReactionsService,
     SituationsService,
     PrismaService,
+    LobbyService,
   ],
   exports: [SocketService],
 })

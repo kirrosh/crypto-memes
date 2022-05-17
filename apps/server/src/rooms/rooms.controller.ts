@@ -16,15 +16,9 @@ export class RoomsController {
       .map(this.lobbyService.parceLobbyName);
   }
   @Get('/:lobby/users')
-  async getUsersInRoom(@Param('lobby') id) {
-    const users = await this.socketService.socket.of('/').adapter.fetchSockets({
-      rooms: new Set([this.lobbyService.createLobbyName(id)]),
-    });
-    const u = await this.socketService.socket
-      .of('/')
-      .adapter.sockets(new Set([this.lobbyService.createLobbyName(id)]));
-    console.log(users.map((s) => s.data));
-    console.log(u);
-    return users.map((s) => s.data);
+  getUsersInRoom(@Param('lobby') id: string) {
+    return this.socketService.getUsersInRoom(
+      new Set([this.lobbyService.createLobbyName(id)]),
+    );
   }
 }

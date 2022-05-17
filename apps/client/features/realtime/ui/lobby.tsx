@@ -1,17 +1,22 @@
 import { authAtom } from 'features/auth'
 import { useAtomValue } from 'jotai'
-import { useEffect } from 'react'
-import { Table } from 'react-daisyui'
+import { useRouter } from 'next/router'
+import { useCallback, useEffect } from 'react'
+import { Button, Table } from 'react-daisyui'
 import { useQuery } from 'react-query'
-import { useSubscribeToLobby } from '../lib/provider'
 import { socketAtom } from '../lib/socketIo'
+import { useSubscribeToLobby } from '../lib/useSubscribeToLobby'
 
 type Props = {
   lobbyId: string
 }
 
 export const Lobby = ({ lobbyId }: Props) => {
-  const socket = useAtomValue(socketAtom)
+  const { push } = useRouter()
+
+  const goToGame = useCallback(() => {
+    push(`/game/${lobbyId}`)
+  }, [lobbyId])
   const { data: users } = useSubscribeToLobby(lobbyId)
   // const { data: users } = useQuery<{ account: string; id: string }[]>(
   //   `/rooms/${lobbyId}/users`
@@ -36,6 +41,7 @@ export const Lobby = ({ lobbyId }: Props) => {
             ))}
           </Table.Body>
         </Table>
+        <Button onClick={goToGame}>Start</Button>
       </div>
     </div>
   )

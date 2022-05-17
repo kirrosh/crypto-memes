@@ -20,7 +20,6 @@ export class RoomsService {
 
     this.socketService.socket.of('/').adapter.on('join-room', (room, id) => {
       if (this.lobbyService.isCustomLobby(room)) {
-        console.log(room);
         this.socketService.socket.to(room).emit('join-room', id);
       }
       this.logger.log(`socket ${id} has joined room ${room}`);
