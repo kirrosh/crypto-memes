@@ -31,20 +31,3 @@ export const useConnection = () => {
     }
   }, [])
 }
-
-export const SocketListenersProvider: FC = ({ children }) => {
-  const socket = useAtomValue(socketAtom)
-  const { refetch: refetchRooms } = useQuery<string[]>('/rooms')
-  useEffect(() => {
-    if (socket) {
-      socket.on('room-created', refetchRooms)
-    }
-    return () => {
-      if (socket) {
-        socket.off('room-created', refetchRooms)
-      }
-    }
-  }, [socket])
-
-  return <>{children}</>
-}

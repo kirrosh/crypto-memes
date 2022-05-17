@@ -13,20 +13,21 @@ export class RoomsService {
   onRoomChange() {
     this.socketService.socket.of('/').adapter.on('create-room', (room) => {
       if (this.lobbyService.isCustomLobby(room)) {
-        this.socketService.socket.emit('room-created', room);
+        this.socketService.socket.emit('create-room', room);
       }
       this.logger.log(`room ${room} was created`);
     });
 
     this.socketService.socket.of('/').adapter.on('join-room', (room, id) => {
       if (this.lobbyService.isCustomLobby(room)) {
-        this.socketService.socket.to(room).emit('user-joined', id);
+        console.log(room);
+        this.socketService.socket.to(room).emit('join-room', id);
       }
       this.logger.log(`socket ${id} has joined room ${room}`);
     });
 
     this.socketService.socket.of('/').adapter.on('leave-room', (room, id) => {
-      this.socketService.socket.to(room).emit('user-leave', id);
+      this.socketService.socket.to(room).emit('leave-room', id);
       this.logger.log(`socket ${id} has leaved room ${room}`);
     });
   }

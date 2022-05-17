@@ -3,6 +3,7 @@ import { useAtomValue } from 'jotai'
 import { useEffect } from 'react'
 import { Table } from 'react-daisyui'
 import { useQuery } from 'react-query'
+import { useSubscribeToLobby } from '../lib/provider'
 import { socketAtom } from '../lib/socketIo'
 
 type Props = {
@@ -10,25 +11,11 @@ type Props = {
 }
 
 export const Lobby = ({ lobbyId }: Props) => {
-  const auth = useAtomValue(authAtom)
   const socket = useAtomValue(socketAtom)
-  const { data: users } = useQuery<{ account: string; id: string }[]>(
-    `/rooms/${lobbyId}/users`
-  )
-  console.log(users)
-  useEffect(() => {
-    const onlobby = (lobby: any) => {
-      console.log(lobby)
-    }
-    socket?.emit('joinLobby', {
-      lobby: lobbyId,
-      account: auth.address,
-    })
-    socket?.on('lobbyUpdate', onlobby)
-    return () => {
-      socket?.off('lobbyUpdate', onlobby)
-    }
-  }, [socket])
+  const { data: users } = useSubscribeToLobby(lobbyId)
+  // const { data: users } = useQuery<{ account: string; id: string }[]>(
+  //   `/rooms/${lobbyId}/users`
+  // )
 
   return (
     <div className="text-center hero-content">
