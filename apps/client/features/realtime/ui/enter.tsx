@@ -17,7 +17,6 @@ export const Enter = () => {
         <LobbyList />
         <div className="flex gap-4 mt-6">
           <Input onChange={(e) => setVluea(e.target.value)} maxLength={6} />
-
           <Button color="info" onClick={goToLobby}>
             Create
           </Button>

@@ -1,27 +1,24 @@
-import ky from 'ky'
+import { useAtomValue } from 'jotai'
 import { useRouter } from 'next/router'
 import { useCallback } from 'react'
 import { Button, Table } from 'react-daisyui'
 import { useQuery } from 'react-query'
+import { socketAtom } from '../lib/socketIo'
 
 type RoomsResponse = {
   rooms: string[]
 }
 
 type SituationsResponse = {
-  // rooms: string[]
+  id: number
+  value: string
 }
 
 export const LobbyList = () => {
   const { push } = useRouter()
-  const { data } = useQuery('rooms', () =>
-    ky.get(`${process.env.NEXT_PUBLIC_WS}/rooms`).json<RoomsResponse>()
-  )
-  const { data: situations } = useQuery('situations', () =>
-    ky
-      .get(`${process.env.NEXT_PUBLIC_WS}/situations`)
-      .json<SituationsResponse>()
-  )
+  const { data } = useQuery<string[]>('/rooms')
+
+  const { data: situations } = useQuery<SituationsResponse>('/situations')
   console.log(situations)
   const goToLobby = useCallback((id: string) => {
     push(`/lobby/${id}`)
@@ -35,8 +32,8 @@ export const LobbyList = () => {
       </Table.Head>
 
       <Table.Body>
-        {data?.rooms.map((room, i) => (
-          <Table.Row key={room}>
+        {data?.map((room, i) => (
+          <Table.Row key={room + i}>
             <span>{i + 1}</span>
             <span>{room}</span>
             <Button onClick={() => goToLobby(room)}>Connect</Button>

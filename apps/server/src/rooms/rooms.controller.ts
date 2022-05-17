@@ -1,16 +1,26 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { SocketService } from 'src/socket/socket.service';
+import { LobbyService } from 'src/utils/lobby/lobby.service';
 
 @Controller('rooms')
 export class RoomsController {
-  constructor(private readonly socketService: SocketService) {}
+  constructor(
+    private readonly socketService: SocketService,
+    private lobbyService: LobbyService,
+  ) {}
 
   @Get()
-  getHello() {
-    return {
-      message: 'Hello World!',
-      rooms: Array.from(this.socketService.socket.of('/').adapter.rooms.keys()),
-      roomsSize: this.socketService.socket.of('/').adapter.rooms.size,
-    };
+  getRooms() {
+    return Array.from(this.socketService.socket.of('/').adapter.rooms.keys())
+      .filter(this.lobbyService.isCustomLobby)
+      .map(this.lobbyService.parceLobbyName);
+  }
+  @Get('/:lobby/users')
+  async getUsersInRoom(@Param('lobby') id) {
+    const users = await this.socketService.socket.of('/').adapter.fetchSockets({
+      rooms: new Set([this.lobbyService.createLobbyName(id)]),
+    });
+    console.log(users.map((s) => s.data));
+    return users.map((s) => s.data);
   }
 }

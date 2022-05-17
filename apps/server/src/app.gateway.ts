@@ -9,12 +9,18 @@ import {
 import { Logger } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
 import { SocketService } from './socket/socket.service';
+import { RoomsService } from './rooms/rooms.service';
+import { LobbyService } from './utils/lobby/lobby.service';
 
 @WebSocketGateway({ cors: true })
 export class AppGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
-  constructor(private socketService: SocketService) {}
+  constructor(
+    private socketService: SocketService,
+    private roomsService: RoomsService,
+    private lobbyService: LobbyService,
+  ) {}
   @WebSocketServer()
   server: Server;
 
@@ -26,17 +32,40 @@ export class AppGateway
   }
 
   @SubscribeMessage('joinLobby')
-  handleJoinLobby(client: Socket, payload: string): void {
+  handleJoinLobby(
+    client: Socket,
+    payload: {
+      lobby: string;
+      account: string;
+    },
+  ): void {
     this.logger.log('join to lobby: ' + payload);
-    client.join(payload);
-    this.server.to(payload).emit('lobbyUpdate', { message: 'hi' });
+    client.join(this.lobbyService.createLobbyName(payload.lobby));
+    client.data = {
+      account: payload.account,
+      id: client.id,
+    };
+    // this.server
+    //   .to(this.lobbyService.createLobbyName(payload))
+    //   .emit('lobbyUpdate', { message: 'hi' });
     this.logger.log('rooms: ' + this.server.of('/').adapter.rooms.size);
     // this.server.emit('msgToClient', payload);
   }
+  // @SubscribeMessage('create-room')
+  // handleCreateRoom(room: string): void {
+  //   this.server.emit('room-created', room);
+  //   this.logger.log('room-created', room);
+  //   // this.logger.log('join to lobby: ' + payload);
+  //   // client.join(payload);
+  //   // this.server.to(payload).emit('lobbyUpdate', { message: 'hi' });
+  //   // this.logger.log('rooms: ' + this.server.of('/').adapter.rooms.size);
+  //   // this.server.emit('msgToClient', payload);
+  // }
 
   afterInit(server: Server) {
     this.socketService.socket = server;
     this.logger.log('Init');
+    this.roomsService.onRoomChange();
   }
 
   handleDisconnect(client: Socket) {

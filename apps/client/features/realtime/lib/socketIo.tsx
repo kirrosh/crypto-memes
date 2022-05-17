@@ -1,5 +1,6 @@
-import { atom, useSetAtom } from 'jotai'
-import { useEffect } from 'react'
+import { atom, useAtomValue, useSetAtom } from 'jotai'
+import { FC, useEffect } from 'react'
+import { useQuery } from 'react-query'
 import { io, Socket } from 'socket.io-client'
 
 const url = 'http://localhost:5000'
@@ -22,7 +23,6 @@ export const useConnection = () => {
       rejectUnauthorized: false,
     })
     socket.on('connect', () => {
-      console.log(socket.id)
       setSocket(socket)
     })
     return () => {
@@ -30,4 +30,21 @@ export const useConnection = () => {
       setSocket(null)
     }
   }, [])
+}
+
+export const SocketListenersProvider: FC = ({ children }) => {
+  const socket = useAtomValue(socketAtom)
+  const { refetch: refetchRooms } = useQuery<string[]>('/rooms')
+  useEffect(() => {
+    if (socket) {
+      socket.on('room-created', refetchRooms)
+    }
+    return () => {
+      if (socket) {
+        socket.off('room-created', refetchRooms)
+      }
+    }
+  }, [socket])
+
+  return <>{children}</>
 }

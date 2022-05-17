@@ -7,10 +7,14 @@ import { SocketModule } from './socket/socket.module';
 import { PrismaService } from './prisma/prisma.service';
 import { SituationsService } from './situations/situations.service';
 import { SituationsController } from './situations/situations.controller';
+import { GameService } from './game/game.service';
+import { ReactionsService } from './reactions/reactions.service';
+import { RoomsService } from './rooms/rooms.service';
+import { LobbyService } from './utils/lobby/lobby.service';
 
 @Module({
   imports: [SocketModule],
   controllers: [AppController, RoomsController, SituationsController],
-  providers: [AppService, AppGateway, PrismaService, SituationsService],
+  providers: [AppService, AppGateway, PrismaService, SituationsService, GameService, ReactionsService, RoomsService, LobbyService],
 })
 export class AppModule {}
