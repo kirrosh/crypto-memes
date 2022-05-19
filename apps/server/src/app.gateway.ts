@@ -11,6 +11,8 @@ import { Socket, Server } from 'socket.io';
 import { SocketService } from './socket/socket.service';
 import { RoomsService } from './rooms/rooms.service';
 import { LobbyService } from './utils/lobby/lobby.service';
+import { GameService } from './game/game.service';
+import { Reaction, Situation } from '@prisma/client';
 
 @WebSocketGateway({ cors: true })
 export class AppGateway
@@ -20,15 +22,27 @@ export class AppGateway
     private socketService: SocketService,
     private roomsService: RoomsService,
     private lobbyService: LobbyService,
+    private gameService: GameService,
   ) {}
   @WebSocketServer()
   server: Server;
 
   private logger: Logger = new Logger('AppGateway');
 
-  @SubscribeMessage('msgToServer1')
-  handleMessage(client: Socket, payload: string): void {
-    this.server.emit('msgToClient', payload);
+  @SubscribeMessage('play-situation')
+  playSituation(
+    client: Socket,
+    payload: { roomId: string; situation: Situation },
+  ): void {
+    this.gameService.playSituation({ ...payload, userId: client.data.id });
+  }
+  @SubscribeMessage('play-reaction')
+  playReaction(
+    client: Socket,
+    payload: { roomId: string; reaction: Reaction },
+  ): void {
+    console.log('play-reaction', payload);
+    this.gameService.playReaction({ ...payload, userId: client.data.id });
   }
 
   @SubscribeMessage('join-lobby')
@@ -50,6 +64,11 @@ export class AppGateway
   @SubscribeMessage('leave-lobby')
   handleCreateRoom(client: Socket, payload: string): void {
     client.leave(payload);
+  }
+
+  @SubscribeMessage('start-game')
+  startGame(client: Socket, roomId: string): void {
+    this.gameService.startGame(roomId);
   }
 
   afterInit(server: Server) {

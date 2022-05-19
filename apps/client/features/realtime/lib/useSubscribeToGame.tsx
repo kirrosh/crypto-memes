@@ -17,31 +17,33 @@ type IGame = {
 
 export const gameAtom = atom<IGame | undefined>(undefined)
 
+// export const cardsAtom = atom<{
+//   situations: { id: number; value: string }[]
+//   reactions: { id: number; url: string }[]
+// }>({ reactions: [], situations: [] })
+
 export const useSubscribeToGame = (gameId: string) => {
   const socket = useAtomValue(socketAtom)
   const [game, setGame] = useAtom(gameAtom)
-  const { mutate } = useMutation(() => {
-    return ky.post(`${process.env.NEXT_PUBLIC_WS}/game/${gameId}/start`).json()
-  })
-  // const query = useQuery<{ account: string; id: string }[]>(
-  //   `/rooms/${lobbyId}/users`
-  // )
-  console.log(game)
+  // const { mutate } = useMutation(() => {
+  //   return ky.post(`${process.env.NEXT_PUBLIC_WS}/game/${gameId}/start`).json()
+  // })
   useEffect(() => {
     if (socket && gameId) {
-      socket.on('start-game', setGame)
+      socket.on('game-started', setGame)
       socket.on('next-turn', setGame)
+      // socket.emit('start-game', gameId)
       setTimeout(() => {
-        mutate()
+        socket.emit('start-game', gameId)
       }, 100)
     }
     return () => {
       if (socket) {
-        socket.off('start-game', setGame)
+        socket.off('game-started', setGame)
         socket.off('next-turn', setGame)
         socket?.emit('leave-lobby', gameId)
       }
     }
   }, [socket, gameId])
-  return
+  return game
 }

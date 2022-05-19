@@ -6,7 +6,11 @@ module.exports = {
     'node_modules/daisyui/dist/**/*',
   ],
   theme: {
-    extend: {},
+    extend: {
+      aspectRatio: {
+        card: '4 / 6',
+      },
+    },
   },
   plugins: [require('daisyui')],
 }

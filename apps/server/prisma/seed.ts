@@ -21,6 +21,9 @@ const situations: Prisma.SituationCreateInput[] = [
   {
     value: 'When u realize that song u always skip is actually fire',
   },
+  {
+    value: 'When u realize that song u always skip is actually fire',
+  },
 ];
 async function main() {
   await prisma.situation.deleteMany();
