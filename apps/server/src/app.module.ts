@@ -11,16 +11,10 @@ import { GameService } from './game/game.service';
 import { ReactionsService } from './reactions/reactions.service';
 import { RoomsService } from './rooms/rooms.service';
 import { LobbyService } from './utils/lobby/lobby.service';
-import { GameController } from './game/game.controller';
 
 @Module({
   imports: [SocketModule],
-  controllers: [
-    AppController,
-    RoomsController,
-    SituationsController,
-    GameController,
-  ],
+  controllers: [AppController, RoomsController, SituationsController],
   providers: [
     AppService,
     AppGateway,

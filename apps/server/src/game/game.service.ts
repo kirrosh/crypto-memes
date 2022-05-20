@@ -4,9 +4,9 @@ import { ReactionsService } from 'src/reactions/reactions.service';
 import { SituationsService } from 'src/situations/situations.service';
 import { SocketService } from 'src/socket/socket.service';
 import { LobbyService } from 'src/utils/lobby/lobby.service';
+import { GameProcess, PlayerInfo } from './game-process';
 
 type TurnType = 'situation' | 'reaction' | 'vote';
-type PlayerRole = 'lead' | 'player';
 
 @Injectable()
 export class GameService {
@@ -16,135 +16,44 @@ export class GameService {
     private readonly lobbyService: LobbyService,
     private readonly socketService: SocketService,
   ) {}
-  private gamesMap: Map<
-    string,
-    {
-      situations: Situation[];
-      reactions: Reaction[];
-      players: Map<
-        string,
-        {
-          reaction?: Reaction;
-          situation?: Situation;
-          points: number;
-          situations: Situation[];
-          reactions: Reaction[];
-        }
-      >;
-      activeSituation?: Situation;
-      lead?: string;
-      turn: number;
-      timer: {
-        countdown: number;
-        turnType: TurnType;
-      };
-    }
-  > = new Map();
-  async createGame() {
+  private gamesMap: Map<string, GameProcess> = new Map();
+
+  async createGame(gameId: string) {
     const situations = await this.situationsService.situations({});
     const reactions = await this.reactionsService.reactions({});
-    return {
+    const game = new GameProcess({
       situations,
       reactions,
-      players: new Map(),
-      turn: 0,
-      lead: '',
-      timer: { countdown: 20, turnType: 'situation' as TurnType },
-    };
-  }
-
-  countdownTimer(roomId: string) {
-    const game = this.gamesMap.get(roomId);
-    if (!game) return;
-    const { timer, turn } = game;
-    this.socketService.socket
-      .to(this.lobbyService.createLobbyName(roomId))
-      .emit('timer-game', {
-        countdown: timer.countdown,
-        turnType: timer.turnType,
-        turn,
-      });
-    if (timer.countdown > 0) {
-      timer.countdown--;
-      setTimeout(() => {
-        this.countdownTimer(roomId);
-      }, 1000);
-    } else {
-      this.startNewTurn(roomId);
-    }
-  }
-
-  async startGame(roomId: string) {
-    const game = await this.createGame();
+      gameId,
+      emitPlayerInfo: (playersInfo: PlayerInfo, playerId: string) => {
+        this.socketService.socket.to(playerId).emit('player-info', playersInfo);
+      },
+      onTimerTick: (timer: { countdown: number; turnType: TurnType }) => {
+        console.log('timer', timer);
+        this.socketService.socket
+          .to(this.lobbyService.createLobbyName(gameId))
+          .emit('timer-game', timer);
+      },
+      onEndgame: () => {
+        this.socketService.socket
+          .to(this.lobbyService.createLobbyName(gameId))
+          .emit('end-game', game);
+        this.gamesMap.delete(gameId);
+      },
+    });
     const users = await this.socketService.getUsersInRoom(
-      new Set([this.lobbyService.createLobbyName(roomId)]),
+      new Set([this.lobbyService.createLobbyName(gameId)]),
     );
-    game.lead = users[0]?.id;
-    users.map((u) =>
-      game.players.set(u.id, {
-        points: 0,
-        situations: game.situations.splice(0, 2),
-        reactions: game.reactions.splice(0, 3),
-      }),
-    );
+    users.map((u) => game.addPlayer(u.id));
 
-    this.gamesMap.set(roomId, game);
+    this.gamesMap.set(gameId, game);
 
     this.socketService.socket
-      .to(this.lobbyService.createLobbyName(roomId))
+      .to(this.lobbyService.createLobbyName(gameId))
       .emit('game-started', game);
 
-    this.emitPlayerInfo(roomId);
-
-    setTimeout(() => {
-      this.countdownTimer(roomId);
-    }, 1000);
-  }
-
-  emitPlayerInfo(roomId: string) {
-    const game = this.gamesMap.get(roomId);
-    game.players.forEach((player, id) =>
-      this.socketService.socket.to(id).emit('player-info', {
-        ...player,
-        role: game.lead === id ? 'lead' : 'player',
-      }),
-    );
-  }
-
-  async startNewTurn(roomId: string) {
-    const game = this.gamesMap.get(roomId);
-
-    const { timer } = game;
-    if (game.turn === 5) {
-      this.socketService.socket
-        .to(this.lobbyService.createLobbyName(roomId))
-        .emit('end-game', game);
-      this.gamesMap.delete(roomId);
-      return;
-    }
-
-    switch (timer.turnType) {
-      case 'situation': {
-        timer.countdown = 20;
-        timer.turnType = 'reaction';
-        break;
-      }
-      case 'reaction': {
-        timer.countdown = 5;
-        timer.turnType = 'vote';
-        break;
-      }
-      case 'vote':
-        {
-          timer.countdown = 20;
-          timer.turnType = 'situation';
-          game.turn++;
-          this.makeWinner(roomId);
-          this.emitPlayerInfo(roomId);
-        }
-        break;
-    }
-    this.countdownTimer(roomId);
+    game.emitAllPlayersInfo();
+    game.startCountdown();
   }
 
   playReaction({
@@ -157,10 +66,7 @@ export class GameService {
     reaction: Reaction;
   }) {
     const game = this.gamesMap.get(roomId);
-    game.players.get(userId).reaction = reaction;
-    game.players.get(userId).reactions = game.players
-      .get(userId)
-      .reactions.filter((r) => r.id !== reaction.id);
+    game.playReaction({ userId, reaction });
   }
 
   playSituation({
@@ -173,39 +79,6 @@ export class GameService {
     situation: Situation;
   }) {
     const game = this.gamesMap.get(roomId);
-    game.players.get(userId).situation = situation;
-    game.players.get(userId).situations = game.players
-      .get(userId)
-      .situations.filter((r) => r.id !== situation.id);
-  }
-
-  makeWinner(roomId: string) {
-    const game = this.gamesMap.get(roomId);
-    const winner: string =
-      game.players.keys()[(game.players.size * Math.random()) | 0];
-    game.players.get(winner) && game.players.get(winner).points++;
-    game.lead = winner;
-    return winner;
-  }
-
-  updatecards(roomId: string, winner: string) {
-    const game = this.gamesMap.get(roomId);
-    game.players.forEach((player, id) => {
-      if (id === winner) {
-        game.players.set(id, {
-          ...player,
-          reaction: undefined,
-          situation: undefined,
-          // situations: game.situations.splice(0, 2),
-        });
-      } else {
-        game.players.set(id, {
-          ...player,
-          reaction: undefined,
-          situation: undefined,
-          // reactions: game.reactions.splice(0, 3),
-        });
-      }
-    });
+    game.playSituation({ userId, situation });
   }
 }
