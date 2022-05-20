@@ -1,8 +1,9 @@
 import { socketAtom, useGameTimer, usePlayerInfo } from 'features/realtime'
+import { ITimer } from 'features/realtime/lib/useGameTimer'
 import { useSubscribeToGame } from 'features/realtime/lib/useSubscribeToGame'
 import { atom, useAtom, useAtomValue } from 'jotai'
 import { useEffect } from 'react'
-import { Avatar, Card } from 'react-daisyui'
+import { Avatar, Card, Progress } from 'react-daisyui'
 import { IReaction, ISituation } from 'types/api'
 
 type Props = {
@@ -12,6 +13,18 @@ type Props = {
 const selectedReactionAtom = atom<IReaction | undefined>(undefined)
 const selectedSituationAtom = atom<ISituation | undefined>(undefined)
 
+const useProgress = (timer?: ITimer) => {
+  if (!timer) {
+    return 0
+  }
+  const { countdown, turnType } = timer
+  if (turnType === 'vote') {
+    return 100 - Math.round((countdown / 5) * 100)
+  } else {
+    return 100 - Math.round((countdown / 20) * 100)
+  }
+}
+
 export const Game = ({ gameId }: Props) => {
   const socket = useAtomValue(socketAtom)
   const [selectedReaction, selectRection] = useAtom(selectedReactionAtom)
@@ -19,6 +32,7 @@ export const Game = ({ gameId }: Props) => {
   const game = useSubscribeToGame(gameId)
   const playerInfo = usePlayerInfo(gameId)
   const timer = useGameTimer(gameId)
+  const progress = useProgress(timer)
   useEffect(() => {
     selectRection(undefined)
   }, [timer?.turn])
@@ -36,8 +50,11 @@ export const Game = ({ gameId }: Props) => {
     }
   }
 
+  console.log(progress)
+
   return (
     <div>
+      <Progress value={progress} max={100} color="primary" />
       <div className="flex gap-2">
         <h1>{timer?.turn}</h1>
         <h2>{timer?.turnType}</h2>
@@ -47,9 +64,9 @@ export const Game = ({ gameId }: Props) => {
         {playerInfo?.situations.map((s) => (
           <div
             onClick={() => onSituationClick(s)}
-            className="p-4 bg-blue-800 rounded-lg w-52 aspect-card"
+            className="p-4 bg-blue-800 rounded-2xl w-52 aspect-card"
           >
-            <h2 className="font-bold text-white">{s.value}</h2>
+            <h2 className="text-2xl font-bold text-white">{s.value}</h2>
           </div>
         ))}
       </div>

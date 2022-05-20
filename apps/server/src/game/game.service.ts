@@ -49,7 +49,7 @@ export class GameService {
       players: new Map(),
       turn: 0,
       lead: '',
-      timer: { countdown: 10, turnType: 'situation' as TurnType },
+      timer: { countdown: 20, turnType: 'situation' as TurnType },
     };
   }
 
@@ -125,7 +125,7 @@ export class GameService {
 
     switch (timer.turnType) {
       case 'situation': {
-        timer.countdown = 10;
+        timer.countdown = 20;
         timer.turnType = 'reaction';
         break;
       }
@@ -136,7 +136,7 @@ export class GameService {
       }
       case 'vote':
         {
-          timer.countdown = 10;
+          timer.countdown = 20;
           timer.turnType = 'situation';
           game.turn++;
           this.makeWinner(roomId);

@@ -49,6 +49,12 @@ pnpm run dev
 
 ### Server (Heroku)
 
+Connect (Optional)
+
+- heroku login
+- heroku init
+- heroku git:remote -a crypto-memes-sigma
+
 - go to apps/server
 - git add .
 - git commit -m "new commit"
