@@ -96,10 +96,9 @@ export class GameProcess {
     this.players.get(userId).reactions = this.players
       .get(userId)
       .reactions.filter((r) => r.id !== reaction.id);
-    // add +1 to player size
     if (
       this.activeReactions.size > 0 &&
-      this.activeReactions.size === this.players.size
+      this.activeReactions.size === this.players.size - 1
     ) {
       this.timer.countdown = 0;
     }
