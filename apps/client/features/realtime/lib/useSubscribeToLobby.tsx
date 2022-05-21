@@ -26,7 +26,6 @@ export const useSubscribeToLobby = (lobbyId: string) => {
       if (socket) {
         socket.off('join-room', query.refetch)
         socket.off('leave-room', query.refetch)
-        //   socket?.emit('leave-lobby', lobbyId)
       }
     }
   }, [socket, lobbyId, auth.address])

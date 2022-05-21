@@ -10,6 +10,9 @@ module.exports = {
       aspectRatio: {
         card: '4 / 6',
       },
+      colors: {
+        primary: '#0070f3',
+      },
     },
   },
   plugins: [require('daisyui')],

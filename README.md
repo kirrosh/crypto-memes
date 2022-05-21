@@ -62,6 +62,16 @@ Connect (Optional)
 
 (For new app use https://github.com/unfold/heroku-buildpack-pnpm buildpack)
 
+### Database
+
+Generate Prisma schema
+
+- npx prisma db push
+
+Push Prisma seed data
+
+- npx prisma db seed
+
 ## Useful Links
 
 Learn more about the power of Turborepo:

@@ -8,6 +8,14 @@ import { GameProcess, PlayerInfo } from './game-process';
 
 type TurnType = 'situation' | 'reaction' | 'vote';
 
+type ITimer = {
+  countdown: number;
+  turnType: TurnType;
+  turn: number;
+  activeSituation: Situation;
+  activeReactions: Map<string, Reaction>;
+};
+
 @Injectable()
 export class GameService {
   constructor(
@@ -19,17 +27,23 @@ export class GameService {
   private gamesMap: Map<string, GameProcess> = new Map();
 
   async createGame(gameId: string) {
+    if (this.gamesMap.has(gameId)) {
+      return;
+    }
     const situations = await this.situationsService.situations({});
     const reactions = await this.reactionsService.reactions({});
+    const users = await this.socketService.getUsersInRoom(
+      new Set([this.lobbyService.createLobbyName(gameId)]),
+    );
     const game = new GameProcess({
       situations,
       reactions,
       gameId,
+      players: users.map((u) => u.id),
       emitPlayerInfo: (playersInfo: PlayerInfo, playerId: string) => {
         this.socketService.socket.to(playerId).emit('player-info', playersInfo);
       },
-      onTimerTick: (timer: { countdown: number; turnType: TurnType }) => {
-        console.log('timer', timer);
+      onTimerTick: (timer: ITimer) => {
         this.socketService.socket
           .to(this.lobbyService.createLobbyName(gameId))
           .emit('timer-game', timer);
@@ -41,10 +55,6 @@ export class GameService {
         this.gamesMap.delete(gameId);
       },
     });
-    const users = await this.socketService.getUsersInRoom(
-      new Set([this.lobbyService.createLobbyName(gameId)]),
-    );
-    users.map((u) => game.addPlayer(u.id));
 
     this.gamesMap.set(gameId, game);
 

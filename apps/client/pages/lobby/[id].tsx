@@ -1,5 +1,8 @@
-import { Lobby } from 'features/realtime'
+import { privateRoute } from 'features/auth'
+import { Lobby } from 'features/lobby'
 import { useRouter } from 'next/router'
+
+export const getServerSideProps = privateRoute
 
 const LobbyPage = () => {
   const router = useRouter()
