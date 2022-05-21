@@ -32,20 +32,24 @@ export class GameProcess {
     countdown: number;
     turnType: TurnType;
     turn: number;
+    activeSituation?: Situation;
+    activeReactions?: Map<string, Reaction>;
   }) => void;
   onEndgame: () => void;
 
   constructor({
-    emitPlayerInfo,
-    onTimerTick,
     gameId,
+    players,
     reactions,
     situations,
     onEndgame,
+    emitPlayerInfo,
+    onTimerTick,
   }: {
     gameId: string;
     situations: Situation[];
     reactions: Reaction[];
+    players: string[];
     emitPlayerInfo: (playersInfo: PlayerInfo, playerId: string) => void;
     onTimerTick: (paylod: {
       countdown: number;
@@ -57,7 +61,7 @@ export class GameProcess {
     this.gameId = gameId;
     this.situations = situations;
     this.reactions = reactions;
-    this.turn = 0;
+    this.turn = 1;
     this.players = new Map();
     this.emitPlayerInfo = emitPlayerInfo;
     this.onTimerTick = onTimerTick;
@@ -67,6 +71,8 @@ export class GameProcess {
     };
     this.activeReactions = new Map();
     this.onEndgame = onEndgame;
+    players.forEach((playerId) => this.addPlayer(playerId));
+    this.lead = players[0];
   }
 
   getSituationsFromDeck(amount: number) {
@@ -82,10 +88,6 @@ export class GameProcess {
       reactions: this.getReactionsFromDeck(3),
       situations: this.getSituationsFromDeck(2),
     });
-  }
-
-  makeLead(playerId: string) {
-    this.lead = playerId;
   }
 
   playReaction({ reaction, userId }: { userId: string; reaction: Reaction }) {
@@ -138,6 +140,11 @@ export class GameProcess {
     });
   }
 
+  resetActiveCards() {
+    this.activeReactions.clear();
+    this.activeSituation = undefined;
+  }
+
   async nextPhase() {
     const { timer } = this;
     switch (timer.turnType) {
@@ -158,10 +165,11 @@ export class GameProcess {
 
         this.makeWinner();
         this.updatecards();
-        this.emitAllPlayersInfo();
+        this.resetActiveCards();
         break;
       }
     }
+    this.emitAllPlayersInfo();
     this.countdownTimer();
   }
   emitAllPlayersInfo() {
@@ -177,10 +185,13 @@ export class GameProcess {
   }
 
   countdownTimer() {
-    const { timer, turn } = this;
+    const { timer, turn, activeReactions, activeSituation } = this;
     this.onTimerTick({
       ...timer,
       turn,
+      activeReactions:
+        timer.turnType === 'reaction' ? activeReactions : undefined,
+      activeSituation,
     });
     if (turn === 5) {
       this.onEndgame();
@@ -204,9 +215,12 @@ export class GameProcess {
   }
 
   makeWinner() {
-    const winner: string =
-      this.players.keys()[(this.players.size * Math.random()) | 0];
+    const winner: string = this.getRandomKey(this.players);
     this.players.get(winner) && this.players.get(winner).points++;
     this.lead = winner;
+  }
+  getRandomKey(collection: Map<string, any>) {
+    let keys = Array.from(collection.keys());
+    return keys[Math.floor(Math.random() * keys.length)];
   }
 }

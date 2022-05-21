@@ -3,7 +3,14 @@ import { useEffect } from 'react'
 import { IReaction, ISituation } from 'types/api'
 import { socketAtom } from './socketIo'
 
-export type ITimer = { countdown: number; turnType: string; turn: number }
+export type ITimer = {
+  countdown: number
+  turnType: string
+  turn: number
+  activeSituation?: ISituation
+  activeReactions?: Map<string, IReaction>
+}
+
 export const timerAtom = atom<ITimer | undefined>(undefined)
 
 export const useGameTimer = (gameId: string) => {
