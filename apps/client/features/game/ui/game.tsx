@@ -1,9 +1,7 @@
-import { useGameTimer, usePlayerInfo } from 'features/realtime'
-import { ITimer } from 'features/realtime/lib/useGameTimer'
-import { useSubscribeToGame } from 'features/realtime/lib/useSubscribeToGame'
-import { useSetAtom } from 'jotai'
+import { ITimer, playerInfoAtom, timerAtom } from 'features/realtime'
+import { useAtomValue, useSetAtom } from 'jotai'
 import { useEffect } from 'react'
-import { Countdown, Progress } from 'react-daisyui'
+import { Countdown } from 'react-daisyui'
 import { Reactions, selectedReactionAtom } from './reactions'
 import { Results } from './results'
 import { selectedSituationAtom, Situations } from './situations'
@@ -27,9 +25,11 @@ const useProgress = (timer?: ITimer) => {
 export const Game = ({ gameId }: Props) => {
   const selectRection = useSetAtom(selectedReactionAtom)
   const selectSituation = useSetAtom(selectedSituationAtom)
+  const playerInfo = useAtomValue(playerInfoAtom)
+  const timer = useAtomValue(timerAtom)
 
-  const playerInfo = usePlayerInfo(gameId)
-  const timer = useGameTimer(gameId)
+  // const playerInfo = usePlayerInfo(gameId)
+  // const timer = useGameTimer(gameId)
   useEffect(() => {
     selectRection(undefined)
     selectSituation(undefined)
