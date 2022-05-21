@@ -1,5 +1,8 @@
+import { privateRoute } from 'features/auth'
 import { Game } from 'features/game'
 import { useRouter } from 'next/router'
+
+export const getServerSideProps = privateRoute
 
 const GameyPage = () => {
   const router = useRouter()

@@ -1,26 +1,23 @@
-import { authAtom } from 'features/auth'
+import {
+  socketAtom,
+  useSubscribeToGame,
+  useSubscribeToLobby,
+} from 'features/realtime'
 import { useAtomValue } from 'jotai'
-import { useRouter } from 'next/router'
-import { useCallback, useEffect } from 'react'
+import { useCallback } from 'react'
 import { Button, Table } from 'react-daisyui'
-import { useQuery } from 'react-query'
-import { socketAtom } from '../lib/socketIo'
-import { useSubscribeToLobby } from '../lib/useSubscribeToLobby'
 
 type Props = {
   lobbyId: string
 }
 
 export const Lobby = ({ lobbyId }: Props) => {
-  const { push } = useRouter()
-
+  const socket = useAtomValue(socketAtom)
+  useSubscribeToGame(lobbyId)
   const goToGame = useCallback(() => {
-    push(`/game/${lobbyId}`)
-  }, [lobbyId])
+    socket?.emit('start-game', lobbyId)
+  }, [socket, lobbyId])
   const { data: users } = useSubscribeToLobby(lobbyId)
-  // const { data: users } = useQuery<{ account: string; id: string }[]>(
-  //   `/rooms/${lobbyId}/users`
-  // )
 
   return (
     <div className="text-center hero-content">

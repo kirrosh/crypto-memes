@@ -1,13 +1,7 @@
-import { useAtomValue } from 'jotai'
 import { useRouter } from 'next/router'
 import { useCallback } from 'react'
 import { Button, Table } from 'react-daisyui'
 import { useQuery } from 'react-query'
-import { socketAtom } from '../lib/socketIo'
-
-type RoomsResponse = {
-  rooms: string[]
-}
 
 type SituationsResponse = {
   id: number

@@ -28,7 +28,6 @@ export const Game = ({ gameId }: Props) => {
   const selectRection = useSetAtom(selectedReactionAtom)
   const selectSituation = useSetAtom(selectedSituationAtom)
 
-  useSubscribeToGame(gameId)
   const playerInfo = usePlayerInfo(gameId)
   const timer = useGameTimer(gameId)
   useEffect(() => {

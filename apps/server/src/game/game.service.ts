@@ -56,8 +56,6 @@ export class GameService {
       },
     });
 
-    // users.map((u) => game.addPlayer(u.id));
-
     this.gamesMap.set(gameId, game);
 
     this.socketService.socket

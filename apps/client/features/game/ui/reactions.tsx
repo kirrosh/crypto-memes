@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import { socketAtom } from 'features/realtime'
 import { useAtomValue, useAtom, atom } from 'jotai'
-import { Avatar, Mask } from 'react-daisyui'
+import { Mask } from 'react-daisyui'
 import { IReaction } from 'types/api'
 
 type Props = {
@@ -23,29 +23,20 @@ export const Reactions = ({ gameId, reactions, disabled }: Props) => {
   }
 
   return (
-    <div className="flex gap-2">
+    <div className="flex flex-wrap gap-2">
       {reactions.map((r) => (
         <Mask
           key={r.id}
           src={r.url}
-          width={200}
-          height={200}
+          width={150}
+          height={150}
           variant="squircle"
           className={classNames(
-            'p-8 bg-primary',
+            'p-6 bg-primary cursor-pointer hover:bg-blue-300',
             selectedReaction?.id === r.id && 'bg-green-500'
           )}
           onClick={() => onReactionClick(r)}
-          //   border={selectedReaction?.id === r.id}
-        >
-          {/* <Mask
-            key={r.id}
-            src={r.url}
-            variant="squircle"
-            onClick={() => onReactionClick(r)}
-            //   border={selectedReaction?.id === r.id}
-          /> */}
-        </Mask>
+        />
       ))}
     </div>
   )

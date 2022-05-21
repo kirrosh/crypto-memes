@@ -22,12 +22,12 @@ export const Situations = ({ situations, gameId, disabled }: Props) => {
   }
 
   return (
-    <div className="flex gap-2">
+    <div className="flex flex-wrap gap-2">
       {situations.map((s) => (
         <div
           onClick={() => onSituationClick(s)}
           className={classNames(
-            'p-4 bg-primary rounded-2xl w-52 aspect-card',
+            'p-4 bg-primary rounded-2xl w-52 aspect-card cursor-pointer hover:shadow-md',
             selectedSituation?.id === s.id && 'bg-green-500'
           )}
         >
