@@ -68,7 +68,7 @@ export class AppGateway
 
   @SubscribeMessage('start-game')
   startGame(client: Socket, roomId: string): void {
-    this.gameService.createGame(roomId);
+    this.gameService.createGame(roomId, ['Kirill', 'Vasya', 'Petya']);
   }
 
   afterInit(server: Server) {

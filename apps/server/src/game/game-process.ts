@@ -1,11 +1,21 @@
 import { Reaction, Situation } from '@prisma/client';
 
 type Player = {
+  playerId: string;
   reaction?: Reaction;
   situation?: Situation;
   points: number;
   situations: Situation[];
   reactions: Reaction[];
+};
+
+export type Timer = {
+  countdown: number;
+  turnType: TurnType;
+  turn: number;
+  activeSituation: Situation;
+  activeReactions: Map<string, Reaction>;
+  players: Player[];
 };
 
 export type PlayerInfo = {
@@ -28,13 +38,7 @@ export class GameProcess {
     turnType: TurnType;
   };
   emitPlayerInfo: (playersInfo: PlayerInfo, playerId: string) => void;
-  onTimerTick: (paylod: {
-    countdown: number;
-    turnType: TurnType;
-    turn: number;
-    activeSituation?: Situation;
-    activeReactions?: Map<string, Reaction>;
-  }) => void;
+  onTimerTick: (paylod: Timer) => void;
   onEndgame: () => void;
 
   constructor({
@@ -84,6 +88,7 @@ export class GameProcess {
 
   addPlayer(playerId: string) {
     this.players.set(playerId, {
+      playerId,
       points: 0,
       reactions: this.getReactionsFromDeck(3),
       situations: this.getSituationsFromDeck(2),
@@ -184,13 +189,14 @@ export class GameProcess {
   }
 
   countdownTimer() {
-    const { timer, turn, activeReactions, activeSituation } = this;
+    const { timer, turn, activeReactions, activeSituation, players } = this;
     this.onTimerTick({
       ...timer,
       turn,
       activeReactions:
         timer.turnType === 'reaction' ? activeReactions : undefined,
       activeSituation,
+      players: Array.from(players.values()),
     });
     if (turn === 5) {
       this.onEndgame();

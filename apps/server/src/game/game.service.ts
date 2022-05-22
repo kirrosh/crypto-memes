@@ -4,17 +4,10 @@ import { ReactionsService } from 'src/reactions/reactions.service';
 import { SituationsService } from 'src/situations/situations.service';
 import { SocketService } from 'src/socket/socket.service';
 import { LobbyService } from 'src/utils/lobby/lobby.service';
-import { GameProcess, PlayerInfo } from './game-process';
+import { GameProcess, PlayerInfo, Timer } from './game-process';
+import { PlayerBot } from './player-bot';
 
 type TurnType = 'situation' | 'reaction' | 'vote';
-
-type ITimer = {
-  countdown: number;
-  turnType: TurnType;
-  turn: number;
-  activeSituation: Situation;
-  activeReactions: Map<string, Reaction>;
-};
 
 @Injectable()
 export class GameService {
@@ -25,42 +18,67 @@ export class GameService {
     private readonly socketService: SocketService,
   ) {}
   private gamesMap: Map<string, GameProcess> = new Map();
+  private gamesBotsMap: Map<string, Map<string, PlayerBot>> = new Map();
 
-  async createGame(gameId: string) {
+  async createGame(gameId: string, bots?: string[]) {
     if (this.gamesMap.has(gameId)) {
       return;
     }
     const situations = await this.situationsService.situations({});
     const reactions = await this.reactionsService.reactions({});
-    const users = await this.socketService.getUsersInRoom(
-      new Set([this.lobbyService.createLobbyName(gameId)]),
-    );
+    const lobbyName = this.lobbyService.createLobbyName(gameId);
+    const users = await this.socketService.getUsersInRoom(new Set([lobbyName]));
+    let players = users.map((u) => u.id);
+    if (bots) {
+      const botsPlayers = bots.map(
+        (b) =>
+          new PlayerBot({
+            address: b,
+            playReaction: (userId, reaction) =>
+              this.playReaction({
+                userId,
+                reaction,
+                roomId: gameId,
+              }),
+            playSituation: (userId, situation) =>
+              this.playSituation({
+                userId,
+                situation,
+                roomId: gameId,
+              }),
+          }),
+      );
+      const botsMap = new Map(botsPlayers.map((p) => [p.id, p]));
+      this.gamesBotsMap.set(gameId, botsMap);
+      players = players.concat(botsPlayers.map((b) => b.id));
+    }
     const game = new GameProcess({
       situations,
       reactions,
       gameId,
-      players: users.map((u) => u.id),
+      players,
       emitPlayerInfo: (playersInfo: PlayerInfo, playerId: string) => {
-        this.socketService.socket.to(playerId).emit('player-info', playersInfo);
+        if (PlayerBot.isBot(playerId)) {
+          this.setBotsPlayerINfo(gameId, playerId, playersInfo);
+        } else {
+          this.socketService.socket
+            .to(playerId)
+            .emit('player-info', playersInfo);
+        }
       },
-      onTimerTick: (timer: ITimer) => {
-        this.socketService.socket
-          .to(this.lobbyService.createLobbyName(gameId))
-          .emit('timer-game', timer);
+      onTimerTick: (timer: Timer) => {
+        this.socketService.socket.to(lobbyName).emit('timer-countdown', timer);
+        this.notifyBots(gameId, timer);
       },
       onEndgame: () => {
-        this.socketService.socket
-          .to(this.lobbyService.createLobbyName(gameId))
-          .emit('end-game', game);
+        this.socketService.socket.to(lobbyName).emit('game-ended', game);
         this.gamesMap.delete(gameId);
       },
     });
 
     this.gamesMap.set(gameId, game);
 
-    this.socketService.socket
-      .to(this.lobbyService.createLobbyName(gameId))
-      .emit('game-started', game);
+    this.socketService.socket.to(lobbyName).emit('game-started', game);
 
     game.emitAllPlayersInfo();
     game.startCountdown();
@@ -90,5 +108,23 @@ export class GameService {
   }) {
     const game = this.gamesMap.get(roomId);
     game.playSituation({ userId, situation });
+  }
+
+  setBotsPlayerINfo(roomId: string, playerId: string, playerInfo: PlayerInfo) {
+    const bots = this.gamesBotsMap.get(roomId);
+    if (!bots) {
+      return;
+    }
+    bots.get(playerId)?.setPlayerInfo(playerInfo);
+  }
+
+  notifyBots(roomId: string, timer: Timer) {
+    const bots = this.gamesBotsMap.get(roomId);
+    if (!bots) {
+      return;
+    }
+    bots.forEach((bot) => {
+      bot.notifyBot(timer);
+    });
   }
 }

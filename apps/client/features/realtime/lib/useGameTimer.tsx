@@ -17,9 +17,9 @@ export const useGameTimer = (gameId: string) => {
   const socket = useAtomValue(socketAtom)
   const [timer, setTimer] = useAtom(timerAtom)
   useEffect(() => {
-    socket?.on('timer-game', setTimer)
+    socket?.on('timer-countdown', setTimer)
     return () => {
-      socket?.off('timer-game', setTimer)
+      socket?.off('timer-countdown', setTimer)
     }
   }, [socket, gameId])
   return timer
