@@ -28,7 +28,7 @@ export class GameService {
     const reactions = await this.reactionsService.reactions({});
     const lobbyName = this.lobbyService.createLobbyName(gameId);
     const users = await this.socketService.getUsersInRoom(new Set([lobbyName]));
-    let players = users.map((u) => u.id);
+    let players = users.map((u) => ({ playerId: u.id, name: u.account }));
     if (bots) {
       const botsPlayers = bots.map(
         (b) =>
@@ -50,7 +50,9 @@ export class GameService {
       );
       const botsMap = new Map(botsPlayers.map((p) => [p.id, p]));
       this.gamesBotsMap.set(gameId, botsMap);
-      players = players.concat(botsPlayers.map((b) => b.id));
+      players = players.concat(
+        botsPlayers.map((b) => ({ playerId: b.id, name: b.address })),
+      );
     }
     const game = new GameProcess({
       situations,

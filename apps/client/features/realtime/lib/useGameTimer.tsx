@@ -8,7 +8,8 @@ export type ITimer = {
   turnType: string
   turn: number
   activeSituation?: ISituation
-  activeReactions?: Map<string, IReaction>
+  activeReactions: Record<string, IReaction>
+  players: { playerId: string; name: string; points: number }[]
 }
 
 export const timerAtom = atom<ITimer | undefined>(undefined)

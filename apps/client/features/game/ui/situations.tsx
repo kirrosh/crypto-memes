@@ -6,7 +6,7 @@ import { ISituation } from 'types/api'
 type Props = {
   situations: ISituation[]
   gameId: string
-  disabled: boolean
+  disabled?: boolean
 }
 
 export const selectedSituationAtom = atom<ISituation | undefined>(undefined)

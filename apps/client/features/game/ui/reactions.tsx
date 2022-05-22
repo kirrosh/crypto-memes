@@ -7,7 +7,7 @@ import { IReaction } from 'types/api'
 type Props = {
   gameId: string
   reactions: IReaction[]
-  disabled: boolean
+  disabled?: boolean
 }
 
 export const selectedReactionAtom = atom<IReaction | undefined>(undefined)

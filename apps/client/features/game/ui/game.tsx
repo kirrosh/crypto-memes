@@ -2,6 +2,7 @@ import { ITimer, playerInfoAtom, timerAtom } from 'features/realtime'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { useEffect } from 'react'
 import { Countdown } from 'react-daisyui'
+import { Players } from './players'
 import { Reactions, selectedReactionAtom } from './reactions'
 import { Results } from './results'
 import { selectedSituationAtom, Situations } from './situations'
@@ -38,6 +39,7 @@ export const Game = ({ gameId }: Props) => {
   if (!timer || !playerInfo) {
     return <div>Loading...</div>
   }
+
   return (
     <div className="flex flex-col items-center justify-between h-full gap-4">
       <div className="flex flex-col items-center gap-3">
@@ -46,23 +48,28 @@ export const Game = ({ gameId }: Props) => {
         <h1>Turn {timer.turn}</h1>
       </div>
       <div className="justify-self-end">
-        {timer.turnType === 'vote' && timer.activeReactions && (
-          <Results activeReactions={timer.activeReactions} />
+        {timer.turnType === 'vote' && (
+          <Results
+            activeReactions={timer.activeReactions}
+            players={timer.players}
+          />
         )}
-        {playerInfo.role === 'lead' ? (
+        {timer.turnType === 'situation' && playerInfo.role === 'lead' && (
           <Situations
             gameId={gameId}
             situations={playerInfo.situations}
-            disabled={timer.turnType !== 'situation'}
+            // disabled={timer.turnType !== 'situation'}
           />
-        ) : (
+        )}
+        {timer.turnType === 'reaction' && playerInfo.role === 'player' && (
           <Reactions
             gameId={gameId}
             reactions={playerInfo.reactions}
-            disabled={timer.turnType !== 'reaction'}
+            // disabled={timer.turnType !== 'reaction'}
           />
         )}
       </div>
+      <Players players={timer.players} />
     </div>
   )
 }

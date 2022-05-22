@@ -2,6 +2,7 @@ import { Reaction, Situation } from '@prisma/client';
 
 type Player = {
   playerId: string;
+  name: string;
   reaction?: Reaction;
   situation?: Situation;
   points: number;
@@ -14,8 +15,8 @@ export type Timer = {
   turnType: TurnType;
   turn: number;
   activeSituation: Situation;
-  activeReactions: Map<string, Reaction>;
-  players: Player[];
+  activeReactions: Record<string, Reaction>;
+  players: { playerId: string; name: string; points: number }[];
 };
 
 export type PlayerInfo = {
@@ -53,7 +54,7 @@ export class GameProcess {
     gameId: string;
     situations: Situation[];
     reactions: Reaction[];
-    players: string[];
+    players: { playerId: string; name: string }[];
     emitPlayerInfo: (playersInfo: PlayerInfo, playerId: string) => void;
     onTimerTick: (paylod: {
       countdown: number;
@@ -75,8 +76,8 @@ export class GameProcess {
     };
     this.activeReactions = new Map();
     this.onEndgame = onEndgame;
-    players.forEach((playerId) => this.addPlayer(playerId));
-    this.lead = players[0];
+    players.forEach((player) => this.addPlayer(player.playerId, player.name));
+    this.lead = players[0]?.playerId;
   }
 
   getSituationsFromDeck(amount: number) {
@@ -86,8 +87,9 @@ export class GameProcess {
     return this.reactions.splice(0, amount);
   }
 
-  addPlayer(playerId: string) {
+  addPlayer(playerId: string, name: string) {
     this.players.set(playerId, {
+      name,
       playerId,
       points: 0,
       reactions: this.getReactionsFromDeck(3),
@@ -158,7 +160,7 @@ export class GameProcess {
         break;
       }
       case 'reaction': {
-        timer.countdown = 5;
+        timer.countdown = 20;
         timer.turnType = 'vote';
         break;
       }
@@ -193,10 +195,15 @@ export class GameProcess {
     this.onTimerTick({
       ...timer,
       turn,
-      activeReactions:
-        timer.turnType === 'reaction' ? activeReactions : undefined,
+      activeReactions: Object.fromEntries(activeReactions.entries()),
       activeSituation,
-      players: Array.from(players.values()),
+      players: Array.from(players.values()).map(
+        ({ playerId, name, points }) => ({
+          playerId,
+          name,
+          points,
+        }),
+      ),
     });
     if (turn === 5) {
       this.onEndgame();
