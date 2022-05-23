@@ -15,15 +15,6 @@
     }
   },
   "dependencies": {
-    "@types/node": "17.0.4",
-    "@types/pubnub": "^4.29.7",
-    "@types/react": "17.0.38",
-    "@types/uuid": "^8.3.4",
-    "eslint-config-custom": "workspace:*",
-    "prettier": "^2.5.1",
-    "prettier-plugin-tailwindcss": "^0.1.1",
-    "tsconfig": "workspace:*",
-    "typescript": "4.5.4",
     "autoprefixer": "^10.4.2",
     "classnames": "^2.3.1",
     "daisyui": "^2.14.3",
@@ -44,5 +35,15 @@
     "uuid": "^8.3.2",
     "wagmi": "0.3.4"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@types/node": "17.0.4",
+    "@types/pubnub": "^4.29.7",
+    "@types/react": "17.0.38",
+    "@types/uuid": "^8.3.4",
+    "eslint-config-custom": "workspace:*",
+    "prettier": "^2.5.1",
+    "prettier-plugin-tailwindcss": "^0.1.1",
+    "tsconfig": "workspace:*",
+    "typescript": "4.5.4"
+  }
 }
