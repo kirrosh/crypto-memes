@@ -125,6 +125,11 @@ export class GameProcess {
       .situations.filter((r) => r.id !== situation.id);
     this.timer.countdown = 0;
   }
+  playVote({ winner }: { winner: string }) {
+    this.lead = winner;
+    this.players.get(winner).points++;
+    this.timer.countdown = 0;
+  }
 
   updatecards() {
     this.players.forEach((player, id) => {
@@ -169,7 +174,7 @@ export class GameProcess {
         timer.turnType = 'situation';
         this.turn++;
 
-        this.makeWinner();
+        // this.makeWinner();
         this.updatecards();
         this.resetActiveCards();
         break;
@@ -226,11 +231,11 @@ export class GameProcess {
     }, 1000);
   }
 
-  makeWinner() {
-    const winner: string = this.getRandomKey(this.players);
-    this.players.get(winner) && this.players.get(winner).points++;
-    this.lead = winner;
-  }
+  // makeWinner() {
+  //   const winner: string = this.getRandomKey(this.players);
+  //   this.players.get(winner) && this.players.get(winner).points++;
+  //   this.lead = winner;
+  // }
   getRandomKey(collection: Map<string, any>) {
     let keys = Array.from(collection.keys());
     return keys[Math.floor(Math.random() * keys.length)];

@@ -11,20 +11,24 @@ export class PlayerBot {
   playerInfo?: PlayerInfo;
   playSituation: (userId: string, situation: Situation) => void;
   playReaction: (userId: string, reaction: Reaction) => void;
+  playVote: (winner: string) => void;
 
   constructor({
     address,
     playSituation,
     playReaction,
+    playVote,
   }: {
     address: string;
     playSituation: (userId: string, situation: Situation) => void;
     playReaction: (userId: string, reaction: Reaction) => void;
+    playVote: (winner: string) => void;
   }) {
     this.id = 'bot-' + v4();
     this.address = address;
     this.playSituation = playSituation;
     this.playReaction = playReaction;
+    this.playVote = playVote;
   }
 
   setPlayerInfo(playerInfo: PlayerInfo) {
@@ -33,8 +37,15 @@ export class PlayerBot {
 
   notifyBot(timer: Timer) {
     if (this.playerInfo?.role === 'lead') {
-      if (timer.turnType === 'situation') {
-        this.playSituation(this.id, this.playerInfo?.situations[0]);
+      if (timer.turnType === 'situation' && timer.countdown > 5) {
+        setTimeout(() => {
+          this.playSituation(this.id, this.playerInfo?.situations[0]);
+        }, 1000);
+      }
+      if (timer.turnType === 'vote' && timer.countdown > 5) {
+        setTimeout(() => {
+          this.playVote(timer.players.at(0)?.playerId);
+        }, 1000);
       }
     }
     if (this.playerInfo?.role === 'player') {

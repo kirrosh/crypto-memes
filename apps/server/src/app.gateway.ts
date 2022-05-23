@@ -45,6 +45,12 @@ export class AppGateway
     this.gameService.playReaction({ ...payload, userId: client.data.id });
   }
 
+  @SubscribeMessage('play-vote')
+  playVote(client: Socket, payload: { roomId: string; winner: string }): void {
+    console.log('play-reaction', payload);
+    this.gameService.playVote({ ...payload });
+  }
+
   @SubscribeMessage('join-lobby')
   handleJoinLobby(
     client: Socket,

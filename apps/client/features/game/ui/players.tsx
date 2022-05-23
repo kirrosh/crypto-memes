@@ -11,7 +11,7 @@ export const Players = ({ players }: Props) => {
       {players.map((p) => (
         <Avatar
           key={p.playerId}
-          letters={p.name.slice(0, 3)}
+          letters={p.name.slice(0, 3) + `(${p.points})`}
           shape="circle"
           //   border
           size="sm"

@@ -46,6 +46,7 @@ export class GameService {
                 situation,
                 roomId: gameId,
               }),
+            playVote: (winner) => this.playVote({ roomId: gameId, winner }),
           }),
       );
       const botsMap = new Map(botsPlayers.map((p) => [p.id, p]));
@@ -110,6 +111,11 @@ export class GameService {
   }) {
     const game = this.gamesMap.get(roomId);
     game.playSituation({ userId, situation });
+  }
+
+  playVote({ roomId, winner }: { roomId: string; winner: string }) {
+    const game = this.gamesMap.get(roomId);
+    game.playVote({ winner });
   }
 
   setBotsPlayerINfo(roomId: string, playerId: string, playerInfo: PlayerInfo) {

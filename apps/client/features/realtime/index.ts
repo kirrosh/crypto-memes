@@ -8,4 +8,4 @@ export {
   playerInfoAtom,
   timerAtom,
 } from './lib/useGameTimer'
-export type { ITimer } from './lib/useGameTimer'
+export type { ITimer, IPlayerInfo } from './lib/useGameTimer'

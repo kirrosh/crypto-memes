@@ -4,24 +4,24 @@ import { useEffect } from 'react'
 import { Countdown } from 'react-daisyui'
 import { Players } from './players'
 import { Reactions, selectedReactionAtom } from './reactions'
-import { Results } from './results'
+import { Vote } from './vote'
 import { selectedSituationAtom, Situations } from './situations'
 
 type Props = {
   gameId: string
 }
 
-const useProgress = (timer?: ITimer) => {
-  if (!timer) {
-    return 0
-  }
-  const { countdown, turnType } = timer
-  if (turnType === 'vote') {
-    return 100 - Math.round((countdown / 5) * 100)
-  } else {
-    return 100 - Math.round((countdown / 20) * 100)
-  }
-}
+// const useProgress = (timer?: ITimer) => {
+//   if (!timer) {
+//     return 0
+//   }
+//   const { countdown, turnType } = timer
+//   if (turnType === 'vote') {
+//     return 100 - Math.round((countdown / 5) * 100)
+//   } else {
+//     return 100 - Math.round((countdown / 20) * 100)
+//   }
+// }
 
 export const Game = ({ gameId }: Props) => {
   const selectRection = useSetAtom(selectedReactionAtom)
@@ -49,9 +49,11 @@ export const Game = ({ gameId }: Props) => {
       </div>
       <div className="justify-self-end">
         {timer.turnType === 'vote' && (
-          <Results
+          <Vote
             activeReactions={timer.activeReactions}
             players={timer.players}
+            gameId={gameId}
+            role={playerInfo.role}
           />
         )}
         {timer.turnType === 'situation' && playerInfo.role === 'lead' && (

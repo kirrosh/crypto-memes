@@ -1,13 +1,13 @@
 import { privateRoute } from 'features/auth'
-import { Game } from 'features/game'
+import { Results } from 'features/game/ui/results'
 import { useRouter } from 'next/router'
 
 export const getServerSideProps = privateRoute
 
-const GamePage = () => {
+const GameResultsPage = () => {
   const router = useRouter()
   const { id } = router.query
-  return typeof id === 'string' ? <Game gameId={id} /> : null
+  return typeof id === 'string' ? <Results /> : null
 }
 
-export default GamePage
+export default GameResultsPage
