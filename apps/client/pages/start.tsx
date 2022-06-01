@@ -1,7 +1,7 @@
-import { useMetamaskAuth } from 'features/auth'
+// import { useMetamaskAuth } from 'features/auth'
 
 const Start = () => {
-  const { auth, signIn, signOut } = useMetamaskAuth()
+  // const { auth, signIn, signOut } = useMetamaskAuth()
 
   return (
     <div className="flex-col hero-content lg:flex-row-reverse">
@@ -16,9 +16,9 @@ const Start = () => {
           excepturi exercitationem quasi. In deleniti eaque aut repudiandae et a
           id nisi.
         </p>
-        <button className="btn btn-primary" onClick={signIn}>
+        {/* <button className="btn btn-primary" onClick={signIn}>
           Get Started
-        </button>
+        </button> */}
       </div>
     </div>
   )
