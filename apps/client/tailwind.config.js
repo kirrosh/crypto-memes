@@ -9,6 +9,7 @@ module.exports = {
     extend: {
       aspectRatio: {
         card: '4 / 6',
+        board: '9 / 16',
       },
       colors: {
         primary: '#0070f3',

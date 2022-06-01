@@ -62,7 +62,7 @@ export class GameService {
       players,
       emitPlayerInfo: (playersInfo: PlayerInfo, playerId: string) => {
         if (PlayerBot.isBot(playerId)) {
-          this.setBotsPlayerINfo(gameId, playerId, playersInfo);
+          this.setBotsPlayerInfo(gameId, playerId, playersInfo);
         } else {
           this.socketService.socket
             .to(playerId)
@@ -118,7 +118,7 @@ export class GameService {
     game.playVote({ winner });
   }
 
-  setBotsPlayerINfo(roomId: string, playerId: string, playerInfo: PlayerInfo) {
+  setBotsPlayerInfo(roomId: string, playerId: string, playerInfo: PlayerInfo) {
     const bots = this.gamesBotsMap.get(roomId);
     if (!bots) {
       return;

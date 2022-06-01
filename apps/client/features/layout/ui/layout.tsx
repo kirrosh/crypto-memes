@@ -9,8 +9,10 @@ export const Layuot: FC = ({ children }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Header />
-      <div className="flex-1 hero bg-base-200">
-        <div className="py-6 mx-auto max-w-7xl sm:px-6 lg:px-8">{children}</div>
+      <div className="grid flex-1 overflow-x-hidden place-items-center bg-base-200 ">
+        <div className="w-full px-2 py-6 max-w-7xl md:px-6 lg:px-8">
+          {children}
+        </div>
       </div>
     </div>
   )
