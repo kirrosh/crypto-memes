@@ -1,6 +1,11 @@
-import { Mask } from 'react-daisyui'
+import { ITimer } from 'features/realtime'
+import { Countdown, Mask } from 'react-daisyui'
 
-export const Board = () => {
+type Props = {
+  timer: ITimer
+}
+export const Board = ({ timer }: Props) => {
+  const { countdown, turnType, players } = timer
   return (
     <div className="grid place-items-center ">
       <div className="relative p-12 md:w-[400px] w-full">
@@ -10,6 +15,9 @@ export const Board = () => {
           </div>
           <div className="absolute z-20 w-full px-4 mr-1 bg-[#2e335b] aspect-square top-1/4">
             <div className="w-full h-full bg-[#363c6b]" />
+          </div>
+          <div className="absolute z-30 top-1/2 left-1/2">
+            <Countdown value={countdown} />
           </div>
           <div
             className="z-10 w-full p-4 rounded-full aspect-square"
@@ -21,13 +29,19 @@ export const Board = () => {
             <div className="w-full h-full bg-[#363c6b] rounded-full" />
           </div>
         </div>
-        <PLayerPlaces />
+        <PLayerPlaces timer={timer} />
       </div>
     </div>
   )
 }
 
-const PLayerPlaces = () => {
+type PlacesProps = {
+  timer: ITimer
+}
+
+const PLayerPlaces = ({ timer }: PlacesProps) => {
+  const { players, activeReactions } = timer
+  console.log(timer)
   return (
     <>
       <div className="absolute top-5 left-1/2">
@@ -39,7 +53,17 @@ const PLayerPlaces = () => {
               variant="squircle"
               className="p-6 bg-primary"
             />
-            <div className="absolute top-0 w-24 h-24 bg-black"></div>
+            {activeReactions[players[1]?.playerId] && (
+              <div className="absolute top-0 z-40 w-24 h-24 ">
+                <Mask
+                  width={96}
+                  height={96}
+                  variant="squircle"
+                  className="p-2 bg-green-500"
+                  src={activeReactions[players[1]?.playerId]?.url}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -53,6 +77,17 @@ const PLayerPlaces = () => {
                 variant="squircle"
                 className="p-6 bg-primary"
               />
+              {activeReactions[players[2]?.playerId] && (
+                <div className="absolute z-40 w-24 h-24 -top-1/2">
+                  <Mask
+                    width={96}
+                    height={96}
+                    variant="squircle"
+                    className="p-2 bg-green-500"
+                    src={activeReactions[players[2]?.playerId]?.url}
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>
