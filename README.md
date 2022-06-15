@@ -23,11 +23,12 @@ This turborepo has some additional tools already setup for you:
 - [ESLint](https://eslint.org/) for code linting
 - [Prettier](https://prettier.io) for code formatting
 
-### apps/client/.env.local
+### .env
 
 IRON_SESSION_COOKIE_NAME=siwe
 IRON_SESSION_PASSWORD=
 NEXT_PUBLIC_WS=http://localhost:5000
+DATABASE_URL=
 
 ### Build
 
@@ -47,7 +48,7 @@ pnpm run dev
 
 ## Deploy
 
-### Server (Heroku)
+### Server (Heroku) [Deprecated]
 
 Connect (Optional)
 
@@ -66,11 +67,11 @@ Connect (Optional)
 
 Generate Prisma schema
 
-- npx prisma db push
+- pnpm dlx prisma db seed
 
 Push Prisma seed data
 
-- npx prisma db seed
+- pnpm dlx prisma db push
 
 ## Useful Links
 
