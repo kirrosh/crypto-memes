@@ -23,11 +23,14 @@ This turborepo has some additional tools already setup for you:
 - [ESLint](https://eslint.org/) for code linting
 - [Prettier](https://prettier.io) for code formatting
 
-### .env
+### .env.local
 
 IRON_SESSION_COOKIE_NAME=siwe
 IRON_SESSION_PASSWORD=
 NEXT_PUBLIC_WS=http://localhost:5000
+
+### .env
+
 DATABASE_URL=
 
 ### Build

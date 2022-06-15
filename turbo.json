@@ -1,10 +1,9 @@
 {
   "$schema": "https://turborepo.org/schema.json",
   "baseBranch": "origin/main",
-  "globalDependencies": [".env"],
+  "globalDependencies": [".env", ".env.local"],
   "pipeline": {
     "build": {
-      "inputs": ["../../.env"],
       "dependsOn": ["^build"],
       "outputs": ["dist/**", ".next/**"]
     },
@@ -15,7 +14,7 @@
       "dependsOn": ["^generate"]
     },
     "dev": {
-      "inputs": ["../../.env"],
+      "inputs": ["../../.env", "../../.env.local"],
       "dependsOn": ["^dev"],
       "cache": false
     },
